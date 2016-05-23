@@ -4,10 +4,8 @@
 const koa = require("koa");
 const bouncer = require("koa-bouncer");
 const session = require("koa-session");
-const _ = require("lodash");
 
 const config = require("./config");
-const db = require("./db");
 
 const app = koa();
 

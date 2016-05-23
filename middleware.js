@@ -1,5 +1,8 @@
 "use strict";
 
+const db = require("./db");
+const _ = require("lodash");
+
 exports.ensureAuth = function*(next) {
 let sessionId = this.session.sessionId || false;
 if(sessionId) {
