@@ -3,12 +3,14 @@
 // 3rd party
 const Router = require("koa-router");
 const bouncer = require('koa-bouncer');
-
+const mw = require('./middleware.js');
 const db = require("./db");
 const belt = require("./belt");
 
 // initialize
 const router = new Router();
+//check auth
+router.use(mw.ensureAuth);
 
 router.post("/api/login", function*() {
 	// response object
