@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 // 3rd
-const pg = require('co-pg')(require('pg'));
-const assert = require('better-assert');
+const pg = require("co-pg")(require("pg"));
+const assert = require("better-assert");
 // 1st
-const config = require('./config');
+const config = require("./config");
 
 /*
    This module contains core, reusable helper functions for
@@ -58,8 +58,8 @@ function* queryMany(sql, params) {
 //
 //    exports.testQuery = function*() {
 //      return yield withTransaction(function*(client) {
-//        var count1 = yield client.queryOnePromise('SELECT COUNT(*) FROM users');
-//        var count2 = yield client.queryOnePromise('SELECT COUNT(*) FROM messages');
+//        var count1 = yield client.queryOnePromise("SELECT COUNT(*) FROM users");
+//        var count2 = yield client.queryOnePromise("SELECT COUNT(*) FROM messages");
 //
 //        return [count1, count2];
 //      });
@@ -86,10 +86,10 @@ function* withClient(runner) {
     result = yield runner(client);
   } catch (err) {
     if (err.removeFromPool) {
-      err.human = 'Could not remove from pool';
-      done(new Error('Removing connection from pool'));
+      err.human = "Could not remove from pool";
+      done(new Error("Removing connection from pool"));
       throw err;
-    } else if (err.code === '40P01') { // Deadlock
+    } else if (err.code === "40P01") { // Deadlock
       done();
       return yield withClient(runner);
     } else {
@@ -108,13 +108,13 @@ function* withTransaction(runner) {
   return yield withClient(function*(client) {
     let result;
     try {
-      yield client.queryPromise('BEGIN');
+      yield client.queryPromise("BEGIN");
       result = yield runner(client);
-      yield client.queryPromise('COMMIT');
+      yield client.queryPromise("COMMIT");
       return result;
     } catch (err) {
       try {
-        yield client.queryPromise('ROLLBACK');
+        yield client.queryPromise("ROLLBACK");
       } catch(err) {
         err.removeFromPool = true;
         throw err;

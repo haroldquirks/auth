@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 // 3rd
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 // Returns hashed password value to be used in `users.digest` column
 // String -> String

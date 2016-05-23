@@ -61,8 +61,11 @@ router.post("/api/login", function*() {
 	// Log them in
 	const session = yield db.insertSession({
 		user_id: user.id,
-	    ipaddress: this.request.ip
+	    ipaddress: this.request.ip,
+	    interval: "4 hours"
 	});
+
+	this.session.sessionId = session.id;
 
 	// other info of user
 	this.session.email = session.email;
@@ -135,7 +138,8 @@ router.post("/api/register", function*() {
 	// Log them in
 	const session = yield db.insertSession({
 		user_id: user.id,
-	    ipaddress: this.request.ip
+	    ipaddress: this.request.ip,
+	    interval: "4 hours"
 	});
 
 	this.session.sessionId = session.id;

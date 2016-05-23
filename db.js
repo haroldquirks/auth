@@ -33,11 +33,22 @@ exports.insertUser = function*(data) {
 // create user session
 exports.insertSession = function*(data) {
   const sql = `
-    INSERT INTO sessions (id, user_id, ipaddress)
-    VALUES ($1, $2, $3::inet)
+    INSERT INTO sessions (id, user_id, ipaddress, expired_at)
+    VALUES ($1, $2, $3::inet, NOW() + $4::interval)
     RETURNING *
   `;
 
   return yield dbUtil.queryOne(sql, [
-    uuid.v4(), data.user_id, data.ipaddress]);
+    uuid.v4(), data.user_id, data.ipaddress, data.interval]);
+};
+
+// return boolean if session expires or not
+exports.getSessionById = function*(sessionId) {
+  const sql = `;
+    SELECT * 
+    FROM sessions
+    WHERE id=$1 and expired_at >= NOW()
+  `;
+
+  return yield dbUtil.queryOne(sql, [sessionId]);
 };
