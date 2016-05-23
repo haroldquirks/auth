@@ -1,0 +1,18 @@
+CREATE TABLE users (
+	id SERIAL PRIMARY KEY,
+	name text NOT NULL,
+	email text NOT NULL,
+	password text NOT NULL,
+	site text NOT NULL,
+	created_at timestamptz NOT NULL DEFAULT NOW(),
+	locked_at timestamptz NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE sessions (
+	id uuid PRIMARY KEY,
+	user_id int  NOT NULL REFERENCES users(id),
+	ipaddress text NOT NULL,
+	loggedout_at timestamptz NULL,
+	expired_at timestamptz NULL,
+	created_at timestamptz NOT NULL DEFAULT NOW()
+);
