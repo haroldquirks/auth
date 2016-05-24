@@ -60,6 +60,9 @@ router.post("/api/login", function*() {
 		return;
 	}
 
+	// expires any active sessions of user
+	yield db.updateSessionByUserId(user.id);
+
 	// Log them in
 	const session = yield db.insertSession({
 		user_id: user.id,
@@ -68,10 +71,6 @@ router.post("/api/login", function*() {
 	});
 
 	this.session.sessionId = session.id;
-
-	// other info of user
-	this.session.email = session.email;
-	this.session.site = session.site;
 	
 	this.body = response;
 });
@@ -145,10 +144,6 @@ router.post("/api/register", function*() {
 	});
 
 	this.session.sessionId = session.id;
-
-	// other info of user
-	this.session.email = session.email;
-	this.session.site = session.site;
 	
 	this.body = response;
 });
