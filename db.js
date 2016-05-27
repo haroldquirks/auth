@@ -43,6 +43,17 @@ exports.insertSession = function*(data) {
         uuid.v4(), data.user_id, data.ipaddress, data.interval]);
 };
 
+exports.insertApp = function*(data) {
+    const sql = `
+        INSERT INTO apps (user_id, name, reward, time_limit)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+    `;
+
+    return yield dbUtil.queryOne(sql, [
+        data.user_id, data.name, data.reward, data.time]);
+};
+
 // get session by id
 exports.getSessionById = function*(sessionId) {
     const sql = `;
@@ -62,6 +73,16 @@ exports.getUserByUserId = function*(userId) {
     `;
 
     return yield dbUtil.queryOne(sql, [userId]);
+};
+
+exports.getAppsByUserId = function*(userId) {
+    const sql = `
+        SELECT *
+        FROM apps
+        WHERE user_id = $1
+    `;
+
+    return yield dbUtil.queryMany(sql, [userId]);
 };
 
 exports.updateSessionByUserId = function*(userId) {

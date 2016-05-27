@@ -148,5 +148,74 @@ router.post("/api/register", function*() {
 	this.body = response;
 });
 
+router.post("/api/app", function*() {
+	// response object
+	let response = {}
+	response["success"] = true;
+	response["error"] = {};
+
+	// set response to json
+	this.type = "json";
+
+	// validate data and try/catch for handling thrown errors during validation
+	try {
+		// validate name
+		this.validateBody("name")
+	    .required("App Name is required")
+	    .isString()
+	    .trim()
+	    .checkPred(s => s.length > 0, "App Name is required");
+
+	    // validate email
+		this.validateBody("reward")
+	    .required("Reward is required")
+	    .isString()
+	    .trim()
+	    .isNumeric("Reward must be number only.")
+
+	    // validate email
+		this.validateBody("time")
+	    .required("Timer is required")
+	    .isString()
+	    .trim()
+	    .isNumeric("Timer must be number only")
+
+	    // validate site
+		this.validateBody("site")
+	    .required("Site is required")
+	    .isString()
+	    .trim()
+	    .checkPred(s => s.length > 0, "Site is required");
+
+	    // get validated data and put into data object
+		let data = {}
+		data["name"] = this.vals.name;
+		data["reward"] = this.vals.reward;
+		data["time"] = this.vals.time;
+		data["site"] = this.vals.site;
+		data["user_id"] = this.currUser.id;
+
+		// create app
+		yield db.insertApp(data);
+	} catch(err) {
+		response["success"] = false;
+		response["error"]["message"] = err.message;
+
+		this.body = response;
+		return;
+	}
+	
+	this.body = response;
+});
+
+// Dashboard
+router.get("/dashboard", function*() {
+	const apps = yield db.getAppsByUserId(this.currUser.id);
+
+	yield this.render('dashboard', {
+	    ctx: this,
+	    apps: apps
+	});
+});
 
 module.exports = router;

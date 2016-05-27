@@ -16,3 +16,12 @@ CREATE TABLE sessions (
 	expired_at timestamptz NULL,
 	created_at timestamptz NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE apps (
+	id SERIAL PRIMARY KEY,
+	name text NOT NULL,
+	user_id int  NOT NULL REFERENCES users(id),
+	reward int NOT NULL,
+	time_limit int NOT NULL,
+	created_at timestamptz NOT NULL DEFAULT NOW()
+);
