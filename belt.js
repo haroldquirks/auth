@@ -2,6 +2,8 @@
 
 // 3rd
 const bcrypt = require("bcryptjs");
+const config = require("./config");
+const kickbox = require("kickbox");
 
 // Returns hashed password value to be used in `users.digest` column
 // String -> String
@@ -23,4 +25,21 @@ exports.checkPassword = function(password, digest) {
       resolve(result);
     });
   });
+};
+
+exports.validateEmail = function(email) {
+  var kb = kickbox.client(config.KICKBOX_KEY).kickbox();
+
+  kb.verify(email, function (err, response) {
+    console.log(response);
+    if(!err) {
+      const disposable = response.body.disposable;
+      const accept_all = response.body.accept_all;
+      const success = response.body.success;
+      if(!disposable && !accept_all && success) {
+        return true;
+      }
+    }
+  });
+  return false;
 };

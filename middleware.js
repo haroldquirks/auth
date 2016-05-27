@@ -1,6 +1,7 @@
 "use strict";
 
 const db = require("./db");
+const belt = require("./belt");
 const _ = require("lodash");
 const pre = require("./presenter");
 

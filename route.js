@@ -99,6 +99,7 @@ router.post("/api/register", function*() {
 	    .required("Email is required")
 	    .isString()
 	    .isEmail("Incorrect email format")
+	    .check(belt.validateEmail(), "Email is invalid.")
 	    .checkNot(yield db.getUserByEmail(this.vals.email), 'Email is already taken');
 
 	    // validate email
@@ -126,11 +127,7 @@ router.post("/api/register", function*() {
   		this.check(user, "Database error occured. Please try again.");
 	} catch(err) {
 		response["success"] = false;
-		if (err instanceof bouncer.ValidationError) {
-			response["error"]["message"] = err.message;
-		} else {
-			response["error"]["message"] = err;
-		}
+		response["error"]["message"] = err.message;
 
 		this.body = response;
 		return;
