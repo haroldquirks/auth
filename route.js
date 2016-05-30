@@ -215,4 +215,10 @@ router.get("/dashboard", function*() {
 	});
 });
 
+router.get("/widget", function*() {
+	yield this.render('widget', {
+	    ctx: this
+	});
+});
+
 module.exports = router;

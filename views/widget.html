@@ -1,0 +1,78 @@
+function createEl(name) {
+    return document.createElement(name);
+}
+
+var container = createEl("div");
+container.style.width = "900px";
+container.style.height = "300px";
+
+{% if ctx.currUser %}
+var content="";
+content += "<div style=\"width:300px;height:300px;border: 2px #faebcc solid;float:left;\">";
+content += "        <p>You are logged in and earning bitcoin:<\/p>";
+content += "";
+content += "        <p>You can claim every 5x minutes:<\/p>";
+content += "";
+content += "        <p>200 Satoshi - 50% chance<\/p>";
+content += "        <p>500 Satoshi - 30% chance<\/p>";
+content += "        <p>800 Satoshi - 10% chance<\/p>";
+content += "        <p>900 Satoshi - 9% chance<\/p>";
+content += "        <p>3000 Satoshi - 1% chance<\/p>";
+content += "";
+content += "        <div style=\"border: 2px green solid; padding: 5px;\">";
+content += "            <strong style=\"color: green;\">LIVE:<\/strong> Balance: 34,450,505 Satoshi";
+content += "        <\/div>";
+content += "    <\/div>";
+content += "    <div style=\"width:300px;height:300px;border: 2px #faebcc solid; text-align: center;float:left;\">";
+content += "        <h4>CoinAd Ad<\/h4>";
+content += "        <p>Initially Forced<\/p>";
+content += "";
+content += "        <p>In future we will let them<\/p>";
+content += "        <p>pay and upgrade and<\/p>";
+content += "        <p>take cotrol of this as a<\/p>";
+content += "        <p>blank html spot<\/p>";
+content += "    <\/div>";
+content += "    <div style=\"width:300px;height:300px;border: 2px #faebcc solid;float:left;\">";
+content += "        <div style=\"border-radius: 2px; border: 2px gray solid;padding: 10px;\">";
+content += "            <p style=\"color: gray\">Google Recaptcha Widget<\/p>";
+content += "        <\/div>";
+content += "";
+content += "        <div style=\"border: 2px orange solid; padding: 5px;text-align:center;\">";
+content += "            <p style=\"color: red;\">Time remaining: 01:45:30<\/p>";
+content += "            <p style=\"color: orange;\">Claim A Reward<\/p>";
+content += "        <\/div>";
+content += "    <\/div>";
+{% else %}
+var content="";
+content += "<div style=\"width:900px;height:300px;\">";
+content += "    <div style=\"width:300px;height:300px;border: 2px #faebcc solid;float:left;\">";
+content += "        <h3>Welcome to PaidBooks.com<\/h3>";
+content += "";
+content += "        <h3>You are now reading for FREE.<\/h3>";
+content += "";
+content += "        <p>However, did you know you can earn rewards for you reading time?<\/p>";
+content += "";
+content += "        <p>Just Login below and earn rewards every 5 minutes.<\/p>";
+content += "    <\/div>";
+content += "    <div style=\"width:300px;height:300px;border: 2px #faebcc solid; text-align: center;float:left;\">";
+content += "        <h4>CoinAd Ad<\/h4>";
+content += "        <p>Initially Forced<\/p>";
+content += "";
+content += "        <p>In future we will let them<\/p>";
+content += "        <p>pay and upgrade and<\/p>";
+content += "        <p>take cotrol of this as a<\/p>";
+content += "        <p>blank html spot<\/p>";
+content += "    <\/div>";
+content += "    <div style=\"width:300px;height:300px;border: 2px #faebcc solid;float:left;\">";
+content += "        <p>Login to earn rewards<\/p>";
+content += "        <p>... all of this is editable text field.<\/p>";
+content += "";
+content += "        <button style=\"display: block;width: 100%;color: #fff; background-color: #337ab7;\">Facebook Login<\/button>";
+content += "        <span style=\"display:block; text-align:center;\">Or<\/span>";
+content += "        <button style=\"display: block;width: 100%;color: #000; background-color: #fff;\">Join\/Login with Email<\/button>";
+content += "    <\/div>";
+content += "<\/div>";
+{% endif %}
+
+container.innerHTML = content;
+document.getElementById("widget").appendChild(container);

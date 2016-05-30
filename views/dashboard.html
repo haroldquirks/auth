@@ -59,7 +59,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">Create App</h3>
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body" style="display: none;">
                             <form onSubmit="return false;" id="appForm">
                                 <div class="form-group">
                                     <label for="name">App Name</label>
@@ -81,9 +81,42 @@
                             </form>
                         </div>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Snippets</h3>
+                        </div>
+                        <div class="panel-body">
+                            <textarea style="width:100%; height: 400px; text-align: left;" readonly="readonly">
+                            <div id="widget"></div>
+                            <script type="text/javascript">
+                                (function() {
+                                    var po = document.createElement("script");
+                                    po.type = "text/javascript";
+                                    po.async = true;
+                                    po.src = "http://localhost:3000/widget";
+                                    var s = document.getElementsByTagName("script")[0];
+                                    s.parentNode.insertBefore(po, s);
+                                })();
+                            </script>
+                            </textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div id="widget"></div>
+        <script type="text/javascript">
+            (function() {
+                var po = document.createElement("script");
+                po.type = "text/javascript";
+                po.async = true;
+                po.src = "http://localhost:3000/widget";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+        </script>
+
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
@@ -122,6 +155,12 @@
                     }
                 });
             });
+            (function ($) {
+                $(".panel-heading").on('click', function (e) {
+                    $(this).next('.panel-body').toggle(200);
+                    $(this).parents('.panel-body').toggleClass('active');
+                });
+            })(jQuery);
         </script>
     </body>
 <html>
