@@ -85,6 +85,16 @@ exports.getAppsByUserId = function*(userId) {
     return yield dbUtil.queryMany(sql, [userId]);
 };
 
+exports.getTokenByTokenId = function*(tokenId) {
+    const sql = `
+        SELECT *
+        FROM token
+        WHERE id = $1
+    `;
+
+    return yield dbUtil.queryOne(sql, [tokenId]);
+};
+
 exports.updateSessionByUserId = function*(userId) {
     const sql = `
         UPDATE sessions

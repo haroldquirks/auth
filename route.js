@@ -216,6 +216,30 @@ router.get("/dashboard", function*() {
 });
 
 router.get("/widget", function*() {
+	const token = this.query.token;
+	const referer = this.headers.referer;
+	const dummyDomain = "localhost";
+
+	if(referer != dummyDomain) {
+		// response 404
+		this.body = "404";
+		return;
+	}
+
+	try {
+		// check app token if exist
+		app = yield db.getTokenByTokenId(token)
+
+		if(!app) {
+			// response 404
+			this.body = "404";
+			return;
+		}
+	} catch(err) {
+		this.body = "Invalid token";
+		return;
+	}
+
 	yield this.render('widget', {
 	    ctx: this
 	});
