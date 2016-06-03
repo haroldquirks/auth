@@ -38,8 +38,8 @@ content += "            <p style=\"color: gray\">Google Recaptcha Widget<\/p>";
 content += "        <\/div>";
 content += "";
 content += "        <div style=\"border: 2px orange solid; padding: 5px;text-align:center;\">";
-content += "            <p style=\"color: red;\">Time remaining: 01:45:30<\/p>";
-content += "            <p style=\"color: orange;\">Claim A Reward<\/p>";
+content += "            <p id=\"timer\" style=\"color: red;\">Time remaining: <span id=\"hour\">01<\/span>:<span id=\"minute\">45<\/span>:<span id=\"second\">30<\/span><\/p>";
+content += "            <button id=\"claim\" style=\"display:none;\" onClick=\"startTimer();\">Claim A Reward<\/button>";
 content += "        <\/div>";
 content += "    <\/div>";
 {% else %}
@@ -76,3 +76,80 @@ content += "<\/div>";
 
 container.innerHTML = content;
 document.getElementById("widget").appendChild(container);
+
+/**
+ * Convert number of seconds into time object
+ *
+ * @param integer secs Number of seconds to convert
+ * @return object
+ */
+function secondsToTime(secs)
+{
+    var hours = Math.floor(secs / (60 * 60));
+   
+    var divisor_for_minutes = secs % (60 * 60);
+    var minutes = Math.floor(divisor_for_minutes / 60);
+ 
+    var divisor_for_seconds = divisor_for_minutes % 60;
+    var seconds = Math.ceil(divisor_for_seconds);
+   
+    var obj = {
+        "h": hours,
+        "m": minutes,
+        "s": seconds
+    };
+    return obj;
+}
+var endTime = {{remClaimTime}};
+var intervalTime = {{intervalTime}};
+function getTimeRemaining() {
+  endTime = endTime - 1;
+  var time = secondsToTime(endTime);
+  return {
+    'hours': time.h,
+    'minutes': time.m,
+    'seconds': time.s
+  };
+}
+
+function initializeCountdownTimer() {
+  var hoursSpan = document.getElementById('hour');
+  var minutesSpan = document.getElementById('minute');
+  var secondsSpan = document.getElementById('second');
+
+  function updateTimer() {
+    var t = getTimeRemaining();
+    hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+    if (endTime <= 0) {
+    	console.log("asdfasdf");
+      document.getElementById('timer').style.display = "none";
+      document.getElementById('claim').style.display = "block";
+      clearInterval(timeinterval);
+    }
+  }
+
+  console.log(endTime);
+  if(endTime > 0) {
+  	document.getElementById('timer').style.display = "block";
+  	updateTimer();
+  	if(endTime > 0)
+    	var timeinterval = setInterval(updateTimer, 1000);
+    else
+    	document.getElementById('claim').style.display = "block";
+   } else {
+   		document.getElementById('timer').style.display = "none";
+   		document.getElementById('claim').style.display = "block";
+   	}
+}
+
+function startTimer() {
+	document.getElementById('claim').style.display = "none";
+	document.getElementById('timer').style.display = "block";
+	endTime = intervalTime;
+	initializeCountdownTimer();
+}
+
+initializeCountdownTimer();

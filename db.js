@@ -85,6 +85,18 @@ exports.getAppsByUserId = function*(userId) {
     return yield dbUtil.queryMany(sql, [userId]);
 };
 
+exports.getLastClaim = function*(data) {
+    const sql = `
+        SELECT *
+        FROM faucet_claims
+        WHERE user_id = $1
+        AND app_id = $2
+        ORDER BY claimed_at DESC
+        LIMIT 1
+    `;
+    return yield dbUtil.queryOne(sql, [data.user_id, data.app_id]);
+};
+
 exports.getTokenByTokenId = function*(tokenId) {
     const sql = `
         SELECT *

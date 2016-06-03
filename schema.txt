@@ -33,3 +33,11 @@ CREATE TABLE token (
 	expired_at timestamptz NULL,
 	created_at timestamptz NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE faucet_claims (
+	id SERIAL PRIMARY KEY,
+	user_id int  NOT NULL REFERENCES users(id),
+	app_id int  NOT NULL REFERENCES apps(id),
+	amount int NOT NULL,
+	claimed_at timestamptz NOT NULL DEFAULT NOW()
+);

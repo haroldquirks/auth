@@ -215,6 +215,78 @@ router.get("/dashboard", function*() {
 	});
 });
 
+router.post("/api/claim", function*() {
+	// response object
+	let response = {}
+	response["success"] = true;
+	response["error"] = {};
+
+	// set response to json
+	this.type = "json";
+
+	// validate data and try/catch for handling thrown errors during validation
+	try {
+		// validate app id
+		this.validateBody("appid")
+	    .required("App is required")
+	    .isString()
+	    .checkPred(s => s.length > 0, "App is required")
+	    .check(yield db.getAppByAppId(this.vals.appid), "App is invalid.")
+
+	    // validate user id
+		this.validateBody("userid")
+	    .required("User is required")
+	    .isString()
+	    .check(yield db.getUserByUserId(this.vals.userid), 'User is invalid');
+
+	    // validate token
+		this.validateBody("tokenid")
+	    .isString("Token is required")
+	    .isString()
+	    .check(yield db.getTokenByTokenId(this.vals.tokenid), 'Token is invalid');
+
+	    const app_id = this.vals.appid;
+	    const user_id = this.vals.userid;
+
+	    // get validated data and put into data object
+		let data = {}
+		data["app_id"] = app_id;
+		data["user_id"] = user_id;
+
+		// get app by app id
+		const app = yield db.getAppByAppId(app_id);
+
+		// get last claim time with app id and user id
+		const claim = yield db.getLastClaim(data);
+		
+		// if claim is not defined check the time last claim
+		if(claim) {
+			// convert to unix epoch timestamp equivalent to time() in php
+			// lastclaim time + dispense time
+			const lastClaim = Math.floor(new Date(claim.claimed_at).getTime()/1000) + app.time_limit;
+			const now = Math.floor(new Date().getTime()/1000);
+
+			// if true user is not yet allowed to claim
+			if(lastClaim > now) {
+				throw Error("Not yet available to claim.");
+			} 
+		} 
+		// user not have claimed yet and is available to claim to be generic than putting it in every else above
+		let faucetData = {};
+		faucetData["user_id"] = user_id;
+		faucetData["app_id"] = app_id;
+		faucetData["amount"] = app.reward
+		yield db.insertFaucetClaim(faucetData);
+	} catch(err) {
+		response["success"] = false;
+		response["error"]["message"] = err.message;
+		this.body = response;
+		return;
+	}
+	
+	this.body = response;
+});
+
 router.get("/widget", function*() {
 	const token = this.query.token;
 	const referer = this.headers.referer;
@@ -226,22 +298,60 @@ router.get("/widget", function*() {
 		return;
 	}
 
+	// validate data and try/catch for handling thrown errors during validation
 	try {
-		// check app token if exist
-		app = yield db.getTokenByTokenId(token)
+		this.validateBody("appid")
+	    .required("App is required")
+	    .isString()
+	    .checkPred(s => s.length > 0, "App is required")
+	    .check(yield db.getAppByAppId(this.vals.appid), "App is invalid.")
 
-		if(!app) {
-			// response 404
-			this.body = "404";
-			return;
-		}
+	    // validate user id
+		this.validateBody("userid")
+	    .required("User is required")
+	    .isString()
+	    .check(yield db.getUserByUserId(this.vals.userid), 'User is invalid');
+
+	    // validate token
+		this.validateBody("tokenid")
+	    .isString("Token is required")
+	    .isString()
+	    .check(yield db.getTokenByTokenId(this.vals.tokenid), 'Token is invalid');
 	} catch(err) {
-		this.body = "Invalid token";
+		this.body = err.message;
 		return;
 	}
 
+    const app_id = this.vals.appid;
+    const user_id = this.vals.userid;
+
+    // get validated data and put into data object
+	let data = {}
+	data["app_id"] = app_id;
+	data["user_id"] = user_id;
+
+	// get last claim time with app id and user id
+	const claim = yield db.getLastClaim(data);
+
+	// get app by app id
+	const app = yield db.getAppByAppId(app_id);
+
+	const intervalTime = app.time_limit;
+	const time = belt.secondsToTime(intervalTime);
+	let remClaimTime = 0;
+	if(claim) {
+		let lastClaimDate = claim.claimed_at;
+		const currDate = new Date();
+		lastClaimDate.setSeconds(lastClaimDate.getSeconds() + intervalTime);
+		remClaimTime = Math.floor(( (lastClaimDate.getTime() - currDate.getTime()) /1000));
+	}
+	
+	console.log(remClaimTime);
+
 	yield this.render('widget', {
-	    ctx: this
+	    ctx: this,
+	    intervalTime: intervalTime,
+	    remClaimTime: remClaimTime
 	});
 });
 
